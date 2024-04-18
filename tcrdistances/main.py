@@ -1,26 +1,3 @@
-# 这是一个示例 Python 脚本。
-
-# 按 Shift+F10 执行或将其替换为您的代码。
-# 按 双击 Shift 在所有地方搜索类、文件、工具窗口、操作和设置。
-
-
-
-
-#help(TCRrep)
-# from Levenshtein import distance as lev_distance
-# from Bio.Align import PairwiseAligner
-# from Bio.Align import substitution_matrices
-
-# alpha_tcr = TCRrep(cell_df=alpha_sequences_HomoSapiens,
-#                    organism='human',
-#                    chains=['alpha'])
-                  #  # 对于alpha链，使用cdr3_a_aa_col指定CDR3α序列列的列名
-                  #v_a_gene_col='v.segm')  # 对于alpha链，使用v_a_gene_col指定V基因列的列名
-# try:
-#     with open(r'D:\pycharm\py_project\py_project1\mp_data_processing\combo_xcr_2024.tsv', 'r') as file:
-#         print("File is accessible.")
-# except Exception as e:
-#     print("Error accessing the file:", e)
 import pandas as pd
 import numpy as np
 # import pytest
@@ -30,8 +7,9 @@ from tcrdist.repertoire import TCRrep
 import Levenshtein as lev
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 data = pd.read_excel('miniproject_002.xlsx')
-#data.dropna(inplace=True)   #commented out, this would cause error
+#data.dropna(inplace=True)   #commented out, this is causing error
 
 data_human = data[data['species'] == 'HomoSapiens']
 data_mouse = data[data['species'] == 'MusMusculus']
@@ -48,19 +26,19 @@ beta_data_rhesus = data_rhesus[data_rhesus['gene'] == 'TRB']
 # print(alpha_data_rhesus)
 # print(beta_data_rhesus)
 new_cols_alpha = {'CDR3':'cdr3_a_aa', 'V': 'v_a_gene', 'J': 'j_a_gene'}
-alpha_data_human = alpha_data_human.rename(columns = new_cols_alpha)
+alpha_data_human = alpha_data_human.rename(columns=new_cols_alpha)
 new_cols_beta = {'CDR3':'cdr3_b_aa', 'V': 'v_b_gene', 'J': 'j_b_gene'}
-beta_data_human = beta_data_human.rename(columns = new_cols_beta)
+beta_data_human = beta_data_human.rename(columns=new_cols_beta)
 
 new_cols_alpha = {'CDR3':'cdr3_a_aa', 'V': 'v_a_gene', 'J': 'j_a_gene'}
-alpha_data_mouse = alpha_data_mouse.rename(columns = new_cols_alpha)
+alpha_data_mouse = alpha_data_mouse.rename(columns=new_cols_alpha)
 new_cols_beta = {'CDR3':'cdr3_b_aa', 'V': 'v_b_gene', 'J': 'j_b_gene'}
-beta_data_mouse = beta_data_mouse.rename(columns = new_cols_beta)
+beta_data_mouse = beta_data_mouse.rename(columns=new_cols_beta)
 
 new_cols_alpha = {'CDR3':'cdr3_a_aa', 'V': 'v_a_gene', 'J': 'j_a_gene'}
-alpha_data_rhesus = alpha_data_rhesus.rename(columns = new_cols_alpha)
+alpha_data_rhesus = alpha_data_rhesus.rename(columns=new_cols_alpha)
 new_cols_beta = {'CDR3':'cdr3_b_aa', 'V': 'v_b_gene', 'J': 'j_b_gene'}
-beta_data_rhesus = beta_data_rhesus.rename(columns = new_cols_beta)
+beta_data_rhesus = beta_data_rhesus.rename(columns=new_cols_beta)
 print(alpha_data_rhesus) # for testing, no J and V information
 datasets = {
     'human': {
@@ -75,12 +53,12 @@ datasets = {
         #'alpha': alpha_data_rhesus, # this line must be commented out of the code, cuz in rhesus TRA data, V and J sequences are empty
         'beta': beta_data_rhesus,
     }
-    # 其他物种和链类型
+    # other species and chain types
 }
 
 for species, chains_data in datasets.items():
     for chain_type, data in chains_data.items():
-        # 根据链类型设置参数
+        # Set parameters based on chain type
         if chain_type == 'alpha':
             rep = TCRrep(cell_df=data,
                          organism=species,
@@ -92,30 +70,29 @@ for species, chains_data in datasets.items():
                          chains=['beta'],
                          db_file= r'D:\pycharm\py_project\py_project1\mp_data_processing\combo_xcr_2024.tsv')
 
-        # 在这里进行后续的处理，比如计算距离矩阵
+        # Further processing here, such as computing distance matrix
         rep.compute_distances()
 
-        # 导出距离矩阵或进行其他需要的分析
+        # Export distance matrix or perform other necessary analyses
         distance_matrix = rep.pw_alpha if chain_type == 'alpha' else rep.pw_beta
         file_name = f"{species}_{chain_type}_distance_matrix.txt"
         np.savetxt(file_name, distance_matrix, fmt="%s")
-
 
         #pd.DataFrame(distance_matrix).to_csv(file_name)
 #print(alpha_data_rhesus)
 ## np.savetxt('alpha_data_rhesus.txt', alpha_data_rhesus, fmt="%s") # for testing
 new_cols_alpha = {'cdr3_a_aa':'cdr3_alpha_aa'}
-alpha_data_human = alpha_data_human.rename(columns = new_cols_alpha)
+alpha_data_human = alpha_data_human.rename(columns=new_cols_alpha)
 new_cols_beta = {'cdr3_b_aa':'cdr3_beta_aa'}
-beta_data_human = beta_data_human.rename(columns = new_cols_beta)
+beta_data_human = beta_data_human.rename(columns=new_cols_beta)
 #print(sequences)
 new_cols_alpha = {'cdr3_a_aa':'cdr3_alpha_aa'}
-alpha_data_mouse = alpha_data_mouse.rename(columns = new_cols_alpha)
+alpha_data_mouse = alpha_data_mouse.rename(columns=new_cols_alpha)
 new_cols_beta = {'cdr3_b_aa':'cdr3_beta_aa'}
-beta_data_mouse = beta_data_mouse.rename(columns = new_cols_beta)
+beta_data_mouse = beta_data_mouse.rename(columns=new_cols_beta)
 
 new_cols_beta = {'cdr3_b_aa':'cdr3_beta_aa'}
-beta_data_rhesus = beta_data_rhesus.rename(columns = new_cols_beta)
+beta_data_rhesus = beta_data_rhesus.rename(columns=new_cols_beta)
 
 datasets_1 = {
     'human': {
@@ -130,7 +107,7 @@ datasets_1 = {
         #'alpha': alpha_data_rhesus, # this line must be commented out of the code, cuz in rhesus TRA data, V and J sequences are empty
         'beta': beta_data_rhesus,
     }
-    # 其他物种和链类型
+    # other species and chain types
 }
 print(beta_data_human.cdr3_beta_aa)
 
@@ -148,7 +125,6 @@ for species, chains_data in datasets_1.items():
             plt.show()
         else:
             print(f'Column {cdr3_column} not found in the dataset for {species} {chain_type} chains.')
-# 计算距离矩阵
 
 sequences = alpha_data_rhesus['cdr3_a_aa']
 n = len(sequences)
@@ -160,6 +136,146 @@ for i in range(n):
 print(distance_matrix_TRA_rhesus)
 np.savetxt('distance_matrix_TRA_rhesus.txt', distance_matrix_TRA_rhesus, fmt="%s")
 print(alpha_data_human)
+
+# import pandas as pd
+# import numpy as np
+# # import pytest
+# # import tcrdist as td
+# # from tcrdist import mappers
+# from tcrdist.repertoire import TCRrep
+# import Levenshtein as lev
+# import seaborn as sns
+# import matplotlib.pyplot as plt
+# data = pd.read_excel('miniproject_002.xlsx')
+# #data.dropna(inplace=True)   #commented out, this would cause error
+
+# data_human = data[data['species'] == 'HomoSapiens']
+# data_mouse = data[data['species'] == 'MusMusculus']
+# data_rhesus = data[data['species'] == 'MacacaMulatta']
+# #print(data_rhesus)
+# alpha_data_human = data_human[data_human['gene'] == 'TRA']
+# beta_data_human = data_human[data_human['gene'] == 'TRB']
+
+# alpha_data_mouse = data_mouse[data_mouse['gene'] == 'TRA']
+# beta_data_mouse = data_mouse[data_mouse['gene'] == 'TRB']
+
+# alpha_data_rhesus = data_rhesus[data_rhesus['gene'] == 'TRA']  #focus on this line, it caused a problem, solved in this code
+# beta_data_rhesus = data_rhesus[data_rhesus['gene'] == 'TRB']
+# # print(alpha_data_rhesus)
+# # print(beta_data_rhesus)
+# new_cols_alpha = {'CDR3':'cdr3_a_aa', 'V': 'v_a_gene', 'J': 'j_a_gene'}
+# alpha_data_human = alpha_data_human.rename(columns = new_cols_alpha)
+# new_cols_beta = {'CDR3':'cdr3_b_aa', 'V': 'v_b_gene', 'J': 'j_b_gene'}
+# beta_data_human = beta_data_human.rename(columns = new_cols_beta)
+
+# new_cols_alpha = {'CDR3':'cdr3_a_aa', 'V': 'v_a_gene', 'J': 'j_a_gene'}
+# alpha_data_mouse = alpha_data_mouse.rename(columns = new_cols_alpha)
+# new_cols_beta = {'CDR3':'cdr3_b_aa', 'V': 'v_b_gene', 'J': 'j_b_gene'}
+# beta_data_mouse = beta_data_mouse.rename(columns = new_cols_beta)
+
+# new_cols_alpha = {'CDR3':'cdr3_a_aa', 'V': 'v_a_gene', 'J': 'j_a_gene'}
+# alpha_data_rhesus = alpha_data_rhesus.rename(columns = new_cols_alpha)
+# new_cols_beta = {'CDR3':'cdr3_b_aa', 'V': 'v_b_gene', 'J': 'j_b_gene'}
+# beta_data_rhesus = beta_data_rhesus.rename(columns = new_cols_beta)
+# print(alpha_data_rhesus) # for testing, no J and V information
+# datasets = {
+#     'human': {
+#         'alpha': alpha_data_human,
+#         'beta': beta_data_human,
+#     },
+#     'mouse': {
+#         'alpha': alpha_data_mouse,
+#         'beta': beta_data_mouse,
+#     },
+#     'rhesus': {
+#         #'alpha': alpha_data_rhesus, # this line must be commented out of the code, cuz in rhesus TRA data, V and J sequences are empty
+#         'beta': beta_data_rhesus,
+#     }
+#     # 其他物种和链类型
+# }
+
+# for species, chains_data in datasets.items():
+#     for chain_type, data in chains_data.items():
+#         # 根据链类型设置参数
+#         if chain_type == 'alpha':
+#             rep = TCRrep(cell_df=data,
+#                          organism=species,
+#                          chains=['alpha'],
+#                          db_file= r'D:\pycharm\py_project\py_project1\mp_data_processing\combo_xcr_2024.tsv')
+#         elif chain_type == 'beta':
+#             rep = TCRrep(cell_df=data,
+#                          organism=species,
+#                          chains=['beta'],
+#                          db_file= r'D:\pycharm\py_project\py_project1\mp_data_processing\combo_xcr_2024.tsv')
+
+#         # 在这里进行后续的处理，比如计算距离矩阵
+#         rep.compute_distances()
+
+#         # 导出距离矩阵或进行其他需要的分析
+#         distance_matrix = rep.pw_alpha if chain_type == 'alpha' else rep.pw_beta
+#         file_name = f"{species}_{chain_type}_distance_matrix.txt"
+#         np.savetxt(file_name, distance_matrix, fmt="%s")
+
+
+#         #pd.DataFrame(distance_matrix).to_csv(file_name)
+# #print(alpha_data_rhesus)
+# ## np.savetxt('alpha_data_rhesus.txt', alpha_data_rhesus, fmt="%s") # for testing
+# new_cols_alpha = {'cdr3_a_aa':'cdr3_alpha_aa'}
+# alpha_data_human = alpha_data_human.rename(columns = new_cols_alpha)
+# new_cols_beta = {'cdr3_b_aa':'cdr3_beta_aa'}
+# beta_data_human = beta_data_human.rename(columns = new_cols_beta)
+# #print(sequences)
+# new_cols_alpha = {'cdr3_a_aa':'cdr3_alpha_aa'}
+# alpha_data_mouse = alpha_data_mouse.rename(columns = new_cols_alpha)
+# new_cols_beta = {'cdr3_b_aa':'cdr3_beta_aa'}
+# beta_data_mouse = beta_data_mouse.rename(columns = new_cols_beta)
+
+# new_cols_beta = {'cdr3_b_aa':'cdr3_beta_aa'}
+# beta_data_rhesus = beta_data_rhesus.rename(columns = new_cols_beta)
+
+# datasets_1 = {
+#     'human': {
+#         'alpha': alpha_data_human,
+#         'beta': beta_data_human,
+#     },
+#     'mouse': {
+#         'alpha': alpha_data_mouse,
+#         'beta': beta_data_mouse,
+#     },
+#     'rhesus': {
+#         #'alpha': alpha_data_rhesus, # this line must be commented out of the code, cuz in rhesus TRA data, V and J sequences are empty
+#         'beta': beta_data_rhesus,
+#     }
+#     # 其他物种和链类型
+# }
+# print(beta_data_human.cdr3_beta_aa)
+
+# for species, chains_data in datasets_1.items():
+#     for chain_type, data in chains_data.items():  # Use a different variable name here
+#         cdr3_column = f'cdr3_{chain_type.lower()}_aa'  # Dynamically construct column name
+#         if cdr3_column in data.columns:
+#             cdr3_lengths = data[cdr3_column].apply(len)
+
+#             plt.figure(figsize=(10, 6))
+#             sns.histplot(cdr3_lengths, kde=True)
+#             plt.title(f'Distribution of CDR3 Lengths - {species} {chain_type.capitalize()} Chains')
+#             plt.xlabel('CDR3 Length')
+#             plt.ylabel('Frequency')
+#             plt.show()
+#         else:
+#             print(f'Column {cdr3_column} not found in the dataset for {species} {chain_type} chains.')
+# # 计算距离矩阵
+
+# sequences = alpha_data_rhesus['cdr3_a_aa']
+# n = len(sequences)
+# distance_matrix_TRA_rhesus = np.zeros((n, n), dtype=int)
+# sequences = sequences.tolist()
+# for i in range(n):
+#     for j in range(n):
+#         distance_matrix_TRA_rhesus[i, j] = lev.distance(sequences[i], sequences[j])
+# print(distance_matrix_TRA_rhesus)
+# np.savetxt('distance_matrix_TRA_rhesus.txt', distance_matrix_TRA_rhesus, fmt="%s")
+# print(alpha_data_human)
 
 # df_alpha_HomoSapiens.dropna(inplace=True)  # to remove null
 # df_beta_HomoSapiens.dropna(inplace=True)  # to remove null
